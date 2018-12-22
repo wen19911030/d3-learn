@@ -1,5 +1,5 @@
 // Get JSON data
-treeJSON = d3.json('/tree.txt', function(error, {result}) {
+treeJSON = d3.json("/tree.txt", function(error, { result }) {
   const treeData = result;
   // Calculate total nodes, max label length
   var totalNodes = 0;
@@ -70,17 +70,17 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
     var speed = panSpeed;
     if (panTimer) {
       clearTimeout(panTimer);
-      translateCoords = d3.transform(svgGroup.attr('transform'));
-      if (direction == 'left' || direction == 'right') {
+      translateCoords = d3.transform(svgGroup.attr("transform"));
+      if (direction == "left" || direction == "right") {
         translateX =
-          direction == 'left'
+          direction == "left"
             ? translateCoords.translate[0] + speed
             : translateCoords.translate[0] - speed;
         translateY = translateCoords.translate[1];
-      } else if (direction == 'up' || direction == 'down') {
+      } else if (direction == "up" || direction == "down") {
         translateX = translateCoords.translate[0];
         translateY =
-          direction == 'up'
+          direction == "up"
             ? translateCoords.translate[1] + speed
             : translateCoords.translate[1] - speed;
       }
@@ -90,12 +90,12 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
       svgGroup
         .transition()
         .attr(
-          'transform',
-          'translate(' + translateX + ',' + translateY + ')scale(' + scale + ')'
+          "transform",
+          "translate(" + translateX + "," + translateY + ")scale(" + scale + ")"
         );
       d3.select(domNode)
-        .select('g.node')
-        .attr('transform', 'translate(' + translateX + ',' + translateY + ')');
+        .select("g.node")
+        .attr("transform", "translate(" + translateX + "," + translateY + ")");
       zoomListener.scale(zoomListener.scale());
       zoomListener.translate([translateX, translateY]);
       panTimer = setTimeout(function() {
@@ -108,8 +108,8 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
 
   function zoom() {
     svgGroup.attr(
-      'transform',
-      'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')'
+      "transform",
+      "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"
     );
   }
 
@@ -117,17 +117,17 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
   var zoomListener = d3.behavior
     .zoom()
     .scaleExtent([0.1, 3])
-    .on('zoom', zoom);
+    .on("zoom", zoom);
 
   function initiateDrag(d, domNode) {
     draggingNode = d;
     d3.select(domNode)
-      .select('.ghostCircle')
-      .attr('pointer-events', 'none');
-    d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
-    d3.select(domNode).attr('class', 'node activeDrag');
+      .select(".ghostCircle")
+      .attr("pointer-events", "none");
+    d3.selectAll(".ghostCircle").attr("class", "ghostCircle show");
+    d3.select(domNode).attr("class", "node activeDrag");
 
-    svgGroup.selectAll('g.node').sort(function(a, b) {
+    svgGroup.selectAll("g.node").sort(function(a, b) {
       // select the parent and sort the path's
       if (a.id != draggingNode.id) return 1;
       // a is not the hovered element, send "a" to the back
@@ -138,14 +138,14 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
       // remove link paths
       links = tree.links(nodes);
       nodePaths = svgGroup
-        .selectAll('path.link')
+        .selectAll("path.link")
         .data(links, function(d) {
           return d.target.id;
         })
         .remove();
       // remove child nodes
       nodesExit = svgGroup
-        .selectAll('g.node')
+        .selectAll("g.node")
         .data(nodes, function(d) {
           return d.id;
         })
@@ -161,7 +161,7 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
     // remove parent link
     parentLink = tree.links(tree.nodes(draggingNode.parent));
     svgGroup
-      .selectAll('path.link')
+      .selectAll("path.link")
       .filter(function(d, i) {
         if (d.target.id == draggingNode.id) {
           return true;
@@ -175,17 +175,17 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
 
   // define the baseSvg, attaching a class for styling and the zoomListener
   var baseSvg = d3
-    .select('#tree-container')
-    .append('svg')
-    .attr('width', viewerWidth)
-    .attr('height', viewerHeight)
-    .attr('class', 'overlay')
+    .select("#tree-container")
+    .append("svg")
+    .attr("width", viewerWidth)
+    .attr("height", viewerHeight)
+    .attr("class", "overlay")
     .call(zoomListener);
 
   // Define the drag listeners for drag/drop behaviour of nodes.
   dragListener = d3.behavior
     .drag()
-    .on('dragstart', function(d) {
+    .on("dragstart", function(d) {
       if (d == root) {
         return;
       }
@@ -194,7 +194,7 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
       d3.event.sourceEvent.stopPropagation();
       // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
     })
-    .on('drag', function(d) {
+    .on("drag", function(d) {
       if (d == root) {
         return;
       }
@@ -204,19 +204,19 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
       }
 
       // get coords of mouseEvent relative to svg container to allow for panning
-      relCoords = d3.mouse($('svg').get(0));
+      relCoords = d3.mouse($("svg").get(0));
       if (relCoords[0] < panBoundary) {
         panTimer = true;
-        pan(this, 'left');
-      } else if (relCoords[0] > $('svg').width() - panBoundary) {
+        pan(this, "left");
+      } else if (relCoords[0] > $("svg").width() - panBoundary) {
         panTimer = true;
-        pan(this, 'right');
+        pan(this, "right");
       } else if (relCoords[1] < panBoundary) {
         panTimer = true;
-        pan(this, 'up');
-      } else if (relCoords[1] > $('svg').height() - panBoundary) {
+        pan(this, "up");
+      } else if (relCoords[1] > $("svg").height() - panBoundary) {
         panTimer = true;
-        pan(this, 'down');
+        pan(this, "down");
       } else {
         try {
           clearTimeout(panTimer);
@@ -226,10 +226,10 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
       d.x0 += d3.event.dy;
       d.y0 += d3.event.dx;
       var node = d3.select(this);
-      node.attr('transform', 'translate(' + d.y0 + ',' + d.x0 + ')');
+      node.attr("transform", "translate(" + d.y0 + "," + d.x0 + ")");
       updateTempConnector();
     })
-    .on('dragend', function(d) {
+    .on("dragend", function(d) {
       if (d == root) {
         return;
       }
@@ -241,10 +241,10 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
           draggingNode.parent.children.splice(index, 1);
         }
         if (
-          typeof selectedNode.children !== 'undefined' ||
-          typeof selectedNode._children !== 'undefined'
+          typeof selectedNode.children !== "undefined" ||
+          typeof selectedNode._children !== "undefined"
         ) {
-          if (typeof selectedNode.children !== 'undefined') {
+          if (typeof selectedNode.children !== "undefined") {
             selectedNode.children.push(draggingNode);
           } else {
             selectedNode._children.push(draggingNode);
@@ -264,12 +264,12 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
 
   function endDrag() {
     selectedNode = null;
-    d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
-    d3.select(domNode).attr('class', 'node');
+    d3.selectAll(".ghostCircle").attr("class", "ghostCircle");
+    d3.select(domNode).attr("class", "node");
     // now restore the mouseover event or we won't be able to drag a 2nd time
     d3.select(domNode)
-      .select('.ghostCircle')
-      .attr('pointer-events', '');
+      .select(".ghostCircle")
+      .attr("pointer-events", "");
     updateTempConnector();
     if (draggingNode !== null) {
       update(root);
@@ -323,15 +323,15 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
         }
       ];
     }
-    var link = svgGroup.selectAll('.templink').data(data);
+    var link = svgGroup.selectAll(".templink").data(data);
     link
       .enter()
-      .append('path')
-      .attr('class', 'templink')
-      .attr('d', d3.svg.diagonal())
-      .attr('pointer-events', 'none');
+      .append("path")
+      .attr("class", "templink")
+      .attr("d", d3.svg.diagonal())
+      .attr("pointer-events", "none");
 
-    link.attr('d', d3.svg.diagonal());
+    link.attr("d", d3.svg.diagonal());
 
     link.exit().remove();
   };
@@ -344,10 +344,10 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
     y = -source.x0;
     x = x * scale + viewerWidth / 2;
     y = y * scale + viewerHeight / 2;
-    d3.select('g')
+    d3.select("g")
       .transition()
       .duration(duration)
-      .attr('transform', 'translate(' + x + ',' + y + ')scale(' + scale + ')');
+      .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
     zoomListener.scale(scale);
     zoomListener.translate([x, y]);
   }
@@ -407,69 +407,69 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
     });
 
     // Update the nodes…
-    node = svgGroup.selectAll('g.node').data(nodes, function(d) {
+    node = svgGroup.selectAll("g.node").data(nodes, function(d) {
       return d.id || (d.id = ++i);
     });
 
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node
       .enter()
-      .append('g')
+      .append("g")
       .call(dragListener)
-      .attr('class', 'node')
-      .attr('transform', function(d) {
-        return 'translate(' + source.y0 + ',' + source.x0 + ')';
+      .attr("class", "node")
+      .attr("transform", function(d) {
+        return "translate(" + source.y0 + "," + source.x0 + ")";
       })
-      .on('click', click);
+      .on("click", click);
 
     nodeEnter
-      .append('circle')
-      .attr('class', 'nodeCircle')
-      .attr('r', 0)
-      .style('fill', function(d) {
-        return d._children ? 'lightsteelblue' : '#fff';
+      .append("circle")
+      .attr("class", "nodeCircle")
+      .attr("r", 0)
+      .style("fill", function(d) {
+        return d._children ? "lightsteelblue" : "#fff";
       });
 
     nodeEnter
-      .append('text')
-      .attr('x', function(d) {
+      .append("text")
+      .attr("x", function(d) {
         return `${-(d.name.length / 2)}em`;
       })
-      .attr('dy', '1.5em')
-      .attr('class', 'nodeText')
-      .attr('text-anchor', function(d) {
-        return 'start';
+      .attr("dy", "1.5em")
+      .attr("class", "nodeText")
+      .attr("text-anchor", function(d) {
+        return "start";
         // return d.children || d._children ? 'end' : 'start';
       })
       .text(function(d) {
         return d.name;
       })
-      .style('fill-opacity', 0);
+      .style("fill-opacity", 0);
 
     // phantom node to give us mouseover in a radius around it
     nodeEnter
-      .append('circle')
-      .attr('class', 'ghostCircle')
-      .attr('r', 30)
-      .attr('opacity', 0.2) // change this to zero to hide the target area
-      .style('fill', 'red')
-      .attr('pointer-events', 'mouseover')
-      .on('mouseover', function(node) {
+      .append("circle")
+      .attr("class", "ghostCircle")
+      .attr("r", 30)
+      .attr("opacity", 0.2) // change this to zero to hide the target area
+      .style("fill", "red")
+      .attr("pointer-events", "mouseover")
+      .on("mouseover", function(node) {
         overCircle(node);
       })
-      .on('mouseout', function(node) {
+      .on("mouseout", function(node) {
         outCircle(node);
       });
 
     // Update the text to reflect whether node has children or not.
     node
-      .select('text')
-      .attr('x', function(d) {
+      .select("text")
+      .attr("x", function(d) {
         return `${-(d.name.length / 2)}em`;
       })
-      .attr('text-anchor', function(d) {
+      .attr("text-anchor", function(d) {
         //   return d.children || d._children ? 'end' : 'start';
-        return 'start';
+        return "start";
       })
       .text(function(d) {
         return d.name;
@@ -477,51 +477,51 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
 
     // Change the circle fill depending on whether it has children and is collapsed
     node
-      .select('circle.nodeCircle')
-      .attr('r', 4.5)
-      .style('fill', function(d) {
-        return d._children ? 'lightsteelblue' : '#fff';
+      .select("circle.nodeCircle")
+      .attr("r", 4.5)
+      .style("fill", function(d) {
+        return d._children ? "lightsteelblue" : "#fff";
       });
 
     // Transition nodes to their new position.
     var nodeUpdate = node
       .transition()
       .duration(duration)
-      .attr('transform', function(d) {
-        return 'translate(' + d.y + ',' + d.x + ')';
+      .attr("transform", function(d) {
+        return "translate(" + d.y + "," + d.x + ")";
       });
 
     // Fade the text in
-    nodeUpdate.select('text').style('fill-opacity', 1);
+    nodeUpdate.select("text").style("fill-opacity", 1);
 
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node
       .exit()
       .transition()
       .duration(duration)
-      .attr('transform', function(d) {
-        return 'translate(' + source.y + ',' + source.x + ')';
+      .attr("transform", function(d) {
+        return "translate(" + source.y + "," + source.x + ")";
       })
       .remove();
 
-    nodeExit.select('circle').attr('r', 0);
+    nodeExit.select("circle").attr("r", 0);
 
-    nodeExit.select('text').style('fill-opacity', 0);
+    nodeExit.select("text").style("fill-opacity", 0);
 
     // Update the links…
-    var link = svgGroup
-      .selectAll('path.link')
-      .append('g')
-      .data(links, function(d) {
-        return d.target.id;
-      });
+    var link = svgGroup.selectAll("path.link").data(links, function(d) {
+      return d.target.id;
+    });
 
     // Enter any new links at the parent's previous position.
-    link
+    var linkEnter = link
       .enter()
-      .insert('path', 'g')
-      .attr('class', 'link')
-      .attr('d', function(d) {
+      .insert("path", "g")
+      .attr("class", "link")
+      .attr("id", function(d, i) {
+        return "mypath" + i;
+      })
+      .attr("d", function(d) {
         var o = {
           x: source.x0,
           y: source.y0
@@ -530,45 +530,45 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
           source: o,
           target: o
         });
-      }) // 首先为每条节点连线添加标识id
-      .attr('id', function(d, i) {
-        return 'mypath' + i;
       });
 
     link
       .enter()
-      .append('text')
-      .attr('x', ({source, target}) => {
+      .append("text")
+      .attr("x", ({ source, target }) => {
         const len = Math.sqrt(
           (target.y - source.y) ** 2 + (target.x - source.x) ** 2
         );
         return Math.max(len - 50, 20);
       })
-      .attr('y', 20)
-      .attr('class', 'linkText')
-      .append('textPath')
+      .attr("y", 20)
+      .attr("class", "linkText")
+      .append("textPath")
       .attr({
         //引用路径
-        'xlink:href': function(d, i) {
-          return '#mypath' + i;
+        "xlink:href": function(d, i) {
+          return "#mypath" + i;
         }
       })
       .text(function(d, i) {
         return d.target.value;
       });
 
+    // 获取update集
+    var linkUpdate = linkEnter.merge(link);
+
     // Transition links to their new position.
-    link
+    linkUpdate
       .transition()
       .duration(duration)
-      .attr('d', diagonal);
+      .attr("d", diagonal);
 
     // Transition exiting nodes to the parent's new position.
     link
       .exit()
       .transition()
       .duration(duration)
-      .attr('d', function(d) {
+      .attr("d", function(d) {
         var o = {
           x: source.x,
           y: source.y
@@ -588,7 +588,7 @@ treeJSON = d3.json('/tree.txt', function(error, {result}) {
   }
 
   // Append a group which holds all nodes and which the zoom Listener can act upon.
-  var svgGroup = baseSvg.append('g');
+  var svgGroup = baseSvg.append("g");
 
   // Define the root
   root = treeData;
